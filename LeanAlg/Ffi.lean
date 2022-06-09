@@ -1,36 +1,32 @@
 structure cVec where
   data : Array Float
-  length: Nat
 
 instance : Inhabited (cVec) where
-  default : cVec := ⟨#[], 0⟩ 
+  default : cVec := ⟨#[]⟩  
 
 namespace cVec
 
 #check cVec.mk
 
 #check cVec.data
-unsafe def externMk : Array Float -> Nat -> cVec
+unsafe def externMk : Array Float -> cVec
   := panic! "Can't actually do this"
 attribute [implementedBy externMk] cVec.mk
-
 
 unsafe def externData : cVec -> Array Float
   := panic! "Can't actually do this"
 attribute [implementedBy externData] cVec.data
 
 @[extern "cVec_new"]
-def new (x : @&Float) (m : @&Nat): cVec 
-  := ⟨mkArray m x, m⟩ 
+def new (m : @&Nat) (x : @&Float) : cVec 
+  := ⟨mkArray m x⟩  
 
-@[export cVec_to_arr]
 def from_arr (a : @&Array Float) : cVec
-  := ⟨a, 5⟩ 
+  := ⟨a⟩  
 
 @[extern "cVec_get_val"]
 def get (v : @&cVec) (i : @&Nat) : Float 
   := v.data[i]
-
 
 @[extern "cVec_dot_prod"]
 def dot_product (v w : @&cVec) : Float

@@ -1,1 +1,1 @@
-rm -rf lib/build
+rm -rf build
