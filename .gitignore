@@ -1,4 +1,5 @@
 /build
 /lean_packages
 /old
+/exploreFiles
 compile_flags.txt
