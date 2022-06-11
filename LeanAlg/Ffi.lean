@@ -29,5 +29,9 @@ def set (v : @&mathVec m) (i : @&Fin m) (x : @&Float) : mathVec m
 
 @[extern "mathVec_scalar_mult"]
 def scalar_multiply (v : @&mathVec m) (s : @& Float) : mathVec m
-  := ⟨λ i => s * v.data i⟩ 
+  := ⟨λ i => s * v.data i⟩
+
+@[extern "mathVec_add_vector"]
+def add_vector (v w : @&mathVec m) : mathVec m 
+  := ⟨λ i => v.data i + w.data i⟩ 
 

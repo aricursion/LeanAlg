@@ -116,3 +116,16 @@ lean_object* mathVec_scalar_mult(lean_object* fin_size_, lean_object* mathVec_, 
     }
     return mathVec_boxer(mVec);
 }
+
+lean_object* mathVec_add_vector(lean_object* fin_size_, lean_object* mathVec_v_, lean_object* mathVec_w_) {
+    mathVec* vVec = mathVec_unboxer(mathVec_v_);
+    mathVec* wVec = mathVec_unboxer(mathVec_w_);
+    uint32_t fin_size = lean_unbox_uint32(fin_size_);
+    
+    assert(vVec->length == fin_size && wVec->length == fin_size);
+    for (size_t i = 0; i < vVec->length; i++) {
+        vVec->data[i] += wVec->data[i];
+    }
+
+    return mathVec_boxer(vVec);
+}
