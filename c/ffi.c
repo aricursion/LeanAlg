@@ -78,7 +78,6 @@ lean_object* mathVec_new(lean_object* len_, double val) {
     v->length = len;
     lean_object* out = mathVec_boxer(v);
 
-    printf("her");
     return out;
 }
 
@@ -91,7 +90,6 @@ double mathVec_get_val(lean_object* fin_size_, lean_object* x_1, lean_object* x_
 
 //good
 lean_object* mathVec_set_val(lean_object* fin_size_, lean_object* mathVec_, lean_object* idx_, double val) {
-    printf("\n?? %d\n", lean_unbox_uint32(fin_size_));
     mathVec* v = mathVec_unboxer(mathVec_);
     uint32_t idx = lean_unbox_uint32(idx_);
     v->data[idx] = val;
@@ -123,9 +121,28 @@ lean_object* mathVec_add_vector(lean_object* fin_size_, lean_object* mathVec_v_,
     uint32_t fin_size = lean_unbox_uint32(fin_size_);
     
     assert(vVec->length == fin_size && wVec->length == fin_size);
+    mathVec* out = mathVec_alloc(fin_size);
+    out->length = fin_size;
+
     for (size_t i = 0; i < vVec->length; i++) {
-        vVec->data[i] += wVec->data[i];
+         out->data[i] += vVec->data[i] + wVec->data[i];
     }
 
-    return mathVec_boxer(vVec);
+    lean_object* lean_out = mathVec_boxer(out);
+    lean_inc(lean_out);
+
+    return lean_out;
+}
+
+double mathVec_dot_prod(lean_object* fin_size_, lean_object* mathVec_v_, lean_object* mathVec_w_) {
+    mathVec* vVec = mathVec_unboxer(mathVec_v_);
+    mathVec* wVec = mathVec_unboxer(mathVec_w_);
+    uint32_t fin_size = lean_unbox_uint32(fin_size_);
+    
+    assert(vVec->length == fin_size && wVec->length == fin_size);
+    double out = 0;
+    for (size_t i = 0; i < vVec->length; i++) {
+        out += vVec->data[i] * wVec->data[i];
+    }
+    return out;
 }

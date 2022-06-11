@@ -1,3 +1,6 @@
+structure genVec (m : Nat) (α : Type u) where
+  data : Fin m -> α 
+
 structure mathVec (m : Nat) where
   data : Fin m -> Float
 
@@ -33,5 +36,17 @@ def scalar_multiply (v : @&mathVec m) (s : @& Float) : mathVec m
 
 @[extern "mathVec_add_vector"]
 def add_vector (v w : @&mathVec m) : mathVec m 
-  := ⟨λ i => v.data i + w.data i⟩ 
+  := ⟨λ i => v.data i + w.data i⟩
 
+-- Supporting functions for Lean
+-- definition of dot product
+def foldl (f : α → β → α) (z : α) : {m : Nat} → (v : genVec m β) → α  
+  | 0, v   => z
+  | m+1, v => foldl f (f z (v.data 0)) ⟨v.data ∘ Fin.succ⟩
+
+def zip (v w : @&mathVec m) : genVec m (Float × Float) 
+  := ⟨λ i => (v.data i, w.data i)⟩ 
+
+@[extern "mathVec_dot_prod"]
+def dot_product (v w : @&mathVec m) : Float
+  := mathVec.foldl (λ z (x, y) => z + (x * y)) 0 (mathVec.zip v w)
