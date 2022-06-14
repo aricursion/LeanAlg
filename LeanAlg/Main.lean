@@ -1,4 +1,5 @@
 import mathVec
+import mathMatrix
 
 def main : IO Unit :=
   do
@@ -17,4 +18,7 @@ def main : IO Unit :=
     let dot_val := @mathVec.dot_product 3 v1 v2
     if dot_val <= 33 ∧ dot_val >= 33 then
       IO.eprintln (s!"{dot_val}")
- 
+
+    let blah := mathMatrix.new 2 5 3
+    let v3 := blah.get 1 1
+    IO.eprintln (s!"{v3}")

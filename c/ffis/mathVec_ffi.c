@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include "../utils/utils.h"
 typedef struct mathVec {
     double*   data;
     uint32_t length;
@@ -13,9 +14,6 @@ static lean_external_class* g_mathVec_external_class = NULL;
 
 extern lean_object* l_instInhabitedFloat;
 
-lean_obj_res make_error(const char* err_msg) {
-    return lean_mk_io_user_error(lean_mk_io_user_error(lean_mk_string(err_msg)));
-}
 //good
 void mathVec_finalizer(void* v_) {
     mathVec* v = (mathVec*) v_;
@@ -24,8 +22,6 @@ void mathVec_finalizer(void* v_) {
     }
     free(v);
 }
-//good
-void noop_foreach(void* mod, b_lean_obj_arg fn) {}
 //good
 lean_obj_res mathVec_initialize() {
     g_mathVec_external_class = lean_register_external_class(
