@@ -1,6 +1,4 @@
-import Ffi
-
-#check 1.0 < 1.0 ∧ 1.0 > 1.0
+import mathVec
 
 def main : IO Unit :=
   do
@@ -17,6 +15,6 @@ def main : IO Unit :=
     IO.eprintln (s!"{mult_val}")
 
     let dot_val := @mathVec.dot_product 3 v1 v2
-    IO.eprintln (s!"{dot_val}")
-
-   
+    if dot_val <= 33 ∧ dot_val >= 33 then
+      IO.eprintln (s!"{dot_val}")
+ 

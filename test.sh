@@ -1,2 +1,2 @@
 lake build
-./build/bin/ffi
+./build/bin/LeanAlg

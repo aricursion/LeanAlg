@@ -1,5 +1,5 @@
 import Ffi
-
+import proofExmaples.lemmas
 -- technically this axiom isn't always true but
 -- I'm not checking, is anyone checking? nahhhh
 axiom Float.add_comm (x y : Float) : x + y = y + x

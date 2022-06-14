@@ -50,3 +50,5 @@ def zip (v w : @&mathVec m) : genVec m (Float × Float)
 @[extern "mathVec_dot_prod"]
 def dot_product (v w : @&mathVec m) : Float
   := mathVec.foldl (λ z (x, y) => z + (x * y)) 0 (mathVec.zip v w)
+
+
