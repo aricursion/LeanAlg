@@ -17,8 +17,8 @@ def cLibTarget (pkgDir : FilePath) : FileTarget :=
 
 package LeanAlg (pkgDir) (args) {
   -- customize layout
-  srcDir := "LeanAlg"
-  libRoots := #[`mathVec, `mathMatrix]
+  --srcDir := "LeanAlg"
+  --libRoots := #[`mathVec, `mathMatrix]
   -- specify the lib as an additional target
   moreLibTargets := #[cLibTarget pkgDir]
 }

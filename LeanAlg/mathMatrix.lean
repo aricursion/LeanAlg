@@ -24,8 +24,10 @@ def from_array (a : @&Array (Array Float)) : (mathMatrix (a.size) (a[0].size))
 def get (M : @&mathMatrix m n) (i : @&Fin m) (j : @& Fin n) : Float 
   := M.data i j
 
---@[extern "mathMatrix_set_val"]
+@[extern "mathMatrix_set_val"]
 def set (M : @&mathMatrix m n) (i : @&Fin m) (j : @&Fin n) (x : @&Float) : mathMatrix m n
   := ⟨λ a b => if a = i ∧ j = b then x else M.data a b⟩
 
-
+@[extern "mathMatrix_transpose"]
+def transpose (M : @&mathMatrix m n) : mathMatrix n m
+  := ⟨λ i j => M.data j i⟩ 

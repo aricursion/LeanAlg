@@ -88,8 +88,15 @@ double mathVec_get_val(lean_object* fin_size_, lean_object* x_1, lean_object* x_
 lean_object* mathVec_set_val(lean_object* fin_size_, lean_object* mathVec_, lean_object* idx_, double val) {
     mathVec* v = mathVec_unboxer(mathVec_);
     uint32_t idx = lean_unbox_uint32(idx_);
-    v->data[idx] = val;
-    return mathVec_boxer(v);
+    
+    mathVec* out_struct = mathVec_alloc(v->length);
+    for (size_t i =0; i < v->length; i++) {
+        out_struct->data[i] = v->data[i];
+    }
+
+    out_struct->data[idx] = val;
+    lean_object* out_lean = mathVec_boxer(out_struct);
+    return out_lean;
 }
 
 //good
@@ -125,8 +132,6 @@ lean_object* mathVec_add_vector(lean_object* fin_size_, lean_object* mathVec_v_,
     }
 
     lean_object* lean_out = mathVec_boxer(out);
-    lean_inc(lean_out);
-
     return lean_out;
 }
 

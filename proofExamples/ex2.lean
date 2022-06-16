@@ -1,4 +1,4 @@
-import Ffi
+import LeanAlg.mathVec
 
 -- Proof that multiplying before and after
 -- getting results in the same value

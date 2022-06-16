@@ -1,4 +1,4 @@
-import Ffi
+import LeanAlg.mathVec
 
 -- Proof that setting a value then getting
 -- it is equal to the original value
