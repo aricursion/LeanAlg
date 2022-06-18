@@ -4,6 +4,9 @@
 #include <stdio.h>
 
 #include "../utils/utils.h"
+#include <cblas.h>
+#include <stdio.h>
+
 
 typedef struct mathMatrix {
     double*   data;
@@ -24,8 +27,6 @@ void mathMatrix_finalizer(void* M_) {
     }
     free(v);
 }
-//good
-// void noop_foreach(void* mod, b_lean_obj_arg fn) {}
 //good
 lean_obj_res mathMatrix_initialize() {
     g_mathMatrix_external_class = lean_register_external_class(
@@ -50,7 +51,6 @@ mathMatrix* mathMatrix_alloc(uint32_t rows, uint32_t columns){
     }
     out->rows = rows;
     out->cols = columns;
-
     return out;
 }
 

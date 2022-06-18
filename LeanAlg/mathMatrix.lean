@@ -1,3 +1,5 @@
+import LeanAlg.mathVec
+
 structure mathMatrix (m n : Nat) where
   data : Fin m -> Fin n -> Float
 
@@ -30,4 +32,14 @@ def set (M : @&mathMatrix m n) (i : @&Fin m) (j : @&Fin n) (x : @&Float) : mathM
 
 @[extern "mathMatrix_transpose"]
 def transpose (M : @&mathMatrix m n) : mathMatrix n m
-  := ⟨λ i j => M.data j i⟩ 
+  := ⟨λ i j => M.data j i⟩
+
+def getCol (M : @& mathMatrix m n) (j : Fin n) : mathVec m 
+  := ⟨λ i => M.data i j⟩
+
+def getRow (M : @& mathMatrix m n) (i : Fin m) : mathVec n
+  := ⟨λ j => M.data i j⟩ 
+
+def multiply (M : @& mathMatrix m n) (M' : @&mathMatrix n k) : mathMatrix m k
+  := ⟨λ i j => mathVec.dot_product (getRow M i) (getCol M' j)⟩ 
+

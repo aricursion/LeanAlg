@@ -48,7 +48,10 @@ def zip (v w : @&mathVec m) : genVec m (Float × Float)
   := ⟨λ i => (v.data i, w.data i)⟩ 
 
 @[extern "mathVec_dot_prod"]
-def dot_product (v w : @&mathVec m) : Float
+def dot_product(v w : @&mathVec m) : Float
   := mathVec.foldl (λ z (x, y) => z + (x * y)) 0 (mathVec.zip v w)
 
-
+@[extern "mathVec_dot_prod"]
+def dot_product' : {m : Nat} → (v w : @&mathVec m) → Float
+  | 0, v, w => 0
+  | m+1, v, w => (v.data 0 * w.data 0) + dot_product' ⟨v.data ∘ Fin.succ⟩ ⟨w.data ∘ Fin.succ⟩ 
