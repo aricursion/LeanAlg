@@ -40,6 +40,7 @@ def getCol (M : @& mathMatrix m n) (j : Fin n) : mathVec m
 def getRow (M : @& mathMatrix m n) (i : Fin m) : mathVec n
   := ⟨λ j => M.data i j⟩ 
 
+@[extern "mathMatrix_mul"]
 def multiply (M : @& mathMatrix m n) (M' : @&mathMatrix n k) : mathMatrix m k
   := ⟨λ i j => mathVec.dot_product (getRow M i) (getCol M' j)⟩ 
 

@@ -23,3 +23,13 @@ def mathMatrixTest : IO Unit :=
 
     if tests_passed = true then
       IO.eprintln (s!"All mathMatrix tests passed!")
+
+    let m1 := new 2 2 3
+    let m1 := m1.set 0 0 5
+    let m1 := m1.set 0 1 1
+
+    let m2 := new 2 2 4
+    let m2 := m2.set 1 0 6
+    let m3 := m1.multiply m2
+
+    IO.eprintln (s! " check: {m3.get 1 1}")

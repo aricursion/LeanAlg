@@ -6,14 +6,6 @@ def ffiSrc := cDir / "bindings.c"
 def buildDir := defaultBuildDir
 
 
-def compileOMod (oFile srcFile : FilePath)
-(moreArgs : Array String := #[]) (compiler : FilePath := "cc") : BuildM PUnit := do
-  createParentDirs oFile
-  proc {
-    cmd := compiler.toString
-    args := #[ "-o", oFile.toString, srcFile.toString] ++ moreArgs
-  }
-
 def ffiOTarget (pkgDir : FilePath) : FileTarget :=
   let oFile := pkgDir / buildDir / cDir / "bindings.o"
   let srcTarget := inputFileTarget <| pkgDir / ffiSrc
@@ -24,6 +16,7 @@ def ffiOTarget (pkgDir : FilePath) : FileTarget :=
 def cLibTarget (pkgDir : FilePath) : FileTarget :=
   let libFile := pkgDir / buildDir / cDir / "libffi.a"
   staticLibTarget libFile #[ffiOTarget pkgDir]
+
 
 package LeanAlg (pkgDir) (args) {
   -- customize layout
