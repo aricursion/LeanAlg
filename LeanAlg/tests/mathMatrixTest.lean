@@ -21,8 +21,7 @@ def mathMatrixTest : IO Unit :=
       IO.eprintln (s!"Transpose not working")
       tests_passed := false
 
-    if tests_passed = true then
-      IO.eprintln (s!"All mathMatrix tests passed!")
+    
 
     let m1 := new 2 2 3
     let m1 := m1.set 0 0 5
@@ -32,4 +31,15 @@ def mathMatrixTest : IO Unit :=
     let m2 := m2.set 1 0 6
     let m3 := m1.multiply m2
 
-    IO.eprintln (s! " check: {m3.get 1 1}")
+    let m4 := new 2 2 24
+    let m4 := m4.set 0 0 26
+    let m4 := m4.set 1 0 30
+    if m3 != m4 then
+      IO.eprintln (s! "Math Matrix not multiplying properly. The result should be 24. Instead: {m3.get 0 1}")
+      tests_passed := false
+
+
+
+
+    if tests_passed = true then
+      IO.eprintln (s!"All mathMatrix tests passed!")

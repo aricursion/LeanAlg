@@ -80,12 +80,13 @@ lean_object* mathVec_new(lean_object* len_, double val) {
 lean_object* mathVec_tabulate(lean_object* m_, lean_object* f) {
     uint32_t m = lean_unbox_uint32(m_);
     mathVec* out = mathVec_alloc(m);
-    for (size_t i = 0; i < m; i++) {
-        out->data[i] = lean_unbox_uint32(lean_apply_1(f, lean_box_uint32(i)));
+    for (uint32_t i = 0; i < m; i++) {
+        lean_object* inat = lean_unsigned_to_nat(i);
+        lean_object* ifin = l_Fin_ofNat(lean_unsigned_to_nat(m-1), inat);
+        out->data[i] = lean_unbox_uint32(lean_apply_1(f, ifin));
     }
 
     return mathVec_boxer(out);
-
 }
 //good
 double mathVec_get_val(lean_object* fin_size_, lean_object* x_1, lean_object* x_2) {

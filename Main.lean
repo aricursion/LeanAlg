@@ -7,4 +7,3 @@ def main : IO Unit :=
   do 
     mathMatrixTest 
     mathVecTest
-    IO.eprintln "hi"

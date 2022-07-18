@@ -172,6 +172,7 @@ lean_object* mathMatrix_mul(lean_object* m_, lean_object* n_, lean_object* k_, l
         result[i] = 0.0;
     }
 
+    /*
     for (int i = 0; i < m*n; i++) {
         printf("%f\n",M1->data[i]);
     }
@@ -179,15 +180,17 @@ lean_object* mathMatrix_mul(lean_object* m_, lean_object* n_, lean_object* k_, l
     for (int i = 0; i < k*n; i++) {
         printf("%f\n",M2->data[i]);
     }
+    */
 
     cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
                 m, k, n, 1.0, M1->data, n, M2->data, k, 0.0, result, k);
 
     out_struct->data = result;
+    /*
     for (size_t i = 0; i < m*k; i++) {
         printf("%f\n", result[i]);
-        fflush(stdout);
     }
+    */
 
     return mathMatrix_boxer(out_struct);
 
