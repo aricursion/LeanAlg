@@ -1,5 +1,4 @@
-structure genVec (m : Nat) (α : Type u) where
-  data : Fin m -> α 
+import LeanAlg.genVec
 
 structure mathVec (m : Nat) where
   data : Fin m -> Float
@@ -15,6 +14,10 @@ namespace mathVec
 @[extern "mathVec_new"]
 def new (m : @&Nat) (x : @&Float) : mathVec m 
   := ⟨λ m => x⟩  
+
+--@[extern "mathVec_tabulate"]
+def tabulate (m : @&Nat) (f : Fin m -> Float) : mathVec m
+  := ⟨λ i => f i⟩  
 
 -- for whatever reason, when accessing you need to
 -- explicitly type the index such as (3 : Fin a.size)
@@ -47,11 +50,10 @@ def foldl (f : α → β → α) (z : α) : {m : Nat} → (v : genVec m β) → 
 def zip (v w : @&mathVec m) : genVec m (Float × Float) 
   := ⟨λ i => (v.data i, w.data i)⟩ 
 
-@[extern "mathVec_dot_prod"]
-def dot_product(v w : @&mathVec m) : Float
-  := mathVec.foldl (λ z (x, y) => z + (x * y)) 0 (mathVec.zip v w)
+def to_genVec (v : mathVec m) : genVec m Float
+  := ⟨v.data⟩
 
 @[extern "mathVec_dot_prod"]
-def dot_product' : {m : Nat} → (v w : @&mathVec m) → Float
-  | 0, v, w => 0
-  | m+1, v, w => (v.data 0 * w.data 0) + dot_product' ⟨v.data ∘ Fin.succ⟩ ⟨w.data ∘ Fin.succ⟩ 
+def dot_product(v w : @&mathVec m) : Float :=
+  genVec.foldl (λ z (x, y) => z + (x * y)) 0 (genVec.zip (to_genVec v) (to_genVec w))
+

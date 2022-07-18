@@ -1,10 +1,20 @@
 import LeanAlg.mathVec
+import LeanAlg.genVec
 
 structure mathMatrix (m n : Nat) where
   data : Fin m -> Fin n -> Float
 
 instance : Inhabited (mathMatrix m n) where
   default : mathMatrix m n := ⟨λ _ _ => 0⟩  
+
+@[extern "mathMatrix_isEqv"]
+def isEqv (M1 M2 : mathMatrix m n) : Bool :=
+  let M1' : genVec m (Fin n -> Float) := ⟨M1.data⟩ 
+  let M2' : genVec m (Fin n -> Float) := ⟨M2.data⟩
+  genVec.foldl (λ b (M1i, M2i) => b ∧ (genVec.VecEqv ⟨M1i⟩ ⟨M2i⟩)) True (genVec.zip M1' M2')
+
+instance : BEq (mathMatrix m n)
+  := ⟨λ M1 M2 => isEqv M1 M2⟩
 
 @[extern "mathMatrix_initialize"] private constant mathMatrix_initializer : IO Unit
 
