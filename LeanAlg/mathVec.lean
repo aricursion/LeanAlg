@@ -15,7 +15,7 @@ namespace mathVec
 def new (m : @&Nat) (x : @&Float) : mathVec m 
   := ⟨λ m => x⟩  
 
---@[extern "mathVec_tabulate"]
+@[extern "mathVec_tabulate"]
 def tabulate (m : @&Nat) (f : Fin m -> Float) : mathVec m
   := ⟨λ i => f i⟩  
 

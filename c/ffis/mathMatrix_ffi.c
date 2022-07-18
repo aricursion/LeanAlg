@@ -109,6 +109,19 @@ lean_object* mathMatrix_new(lean_object* rows_, lean_object* cols_, double val) 
     return out;
 }
 
+uint32_t mathMatrix_isEqv(lean_object* m, lean_object* n, lean_object* M1_, lean_object* M2_) {
+    mathMatrix* M1 = mathMatrix_unboxer(M1_);
+    mathMatrix* M2 = mathMatrix_unboxer(M2_);
+
+    assert(M1->rows == M2->rows);
+    assert(M1->cols == M2->cols);
+
+    for (size_t i = 0; i < (M1->rows*M1->cols); i++) {
+        if (M1->data[i] != M2->data[i])
+            return 0;
+    }
+    return 1;
+}
 //good
 double mathMatrix_get_val(lean_object* rows_, lean_object* cols_, lean_object* M_, lean_object* i_, lean_object* j_) {
     mathMatrix* M = mathMatrix_unboxer(M_);
@@ -116,16 +129,11 @@ double mathMatrix_get_val(lean_object* rows_, lean_object* cols_, lean_object* M
     return mathMatrix_struct_get(M, lean_unbox_uint32(i_), lean_unbox_uint32(j_));
 }
 
-//todo
 lean_object* mathMatrix_set_val(lean_object* rows_, lean_object* cols_, lean_object* M_, lean_object* i_, lean_object* j_, double x) {
     mathMatrix* M = mathMatrix_unboxer(M_);
 
-    mathMatrix* out_struct = mathMatrix_alloc(M->rows, M->cols);
-    for (size_t i = 0; i < M->rows; i++){
-        for (size_t j = 0; j < M->cols; j++) {
-            out_struct->data[(i*M->cols)+j] = mathMatrix_struct_get(M, i, j);
-        }
-    }
+    mathMatrix* out_struct = mathMatrix_copy(M);
+    
     uint32_t idx = lean_unbox_uint32(i_);
     uint32_t jdx = lean_unbox_uint32(j_);
     mathMatrix_struct_set(out_struct, idx, jdx, x);
@@ -145,18 +153,22 @@ lean_object* mathMatrix_transpose(lean_object* rows_, lean_object* cols_, lean_o
     return mathMatrix_boxer(out_struct);
 }
 
-//needlessly inefficient, clean up later
 lean_object* mathMatrix_mul(lean_object* m_, lean_object* n_, lean_object* k_, lean_object* M1_, lean_object* M2_) {
-    uint32_t m = lean_unbox_uint32(m_);
-    uint32_t n = lean_unbox_uint32(n_);
-    uint32_t k = lean_unbox_uint32(k_);
+    //uint32_t m = lean_unbox_uint32(m_);
+    //uint32_t n = lean_unbox_uint32(n_);
+    //uint32_t k = lean_unbox_uint32(k_);
     mathMatrix* M1 = mathMatrix_unboxer(M1_);
     mathMatrix* M2 = mathMatrix_unboxer(M2_);
+    uint32_t m = M1->rows;
+    uint32_t n = M1->cols;
+    uint32_t k = M2->cols;
+
+    assert(n = M2->rows);
+
     mathMatrix* out_struct = mathMatrix_alloc(M1->rows, M2->cols);
-    out_struct->cols=M1->rows;
-    out_struct->rows=M2->cols;
-    double* result = malloc(sizeof(double)*M1->rows*M2->cols);
-    for (size_t i =0; i < m*k; i++) {
+    
+    double* result = malloc(sizeof(double)*m*k);
+    for (size_t i = 0; i < m*k; i++) {
         result[i] = 0.0;
     }
 
@@ -167,6 +179,7 @@ lean_object* mathMatrix_mul(lean_object* m_, lean_object* n_, lean_object* k_, l
     for (int i = 0; i < k*n; i++) {
         printf("%f\n",M2->data[i]);
     }
+
     cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
                 m, k, n, 1.0, M1->data, n, M2->data, k, 0.0, result, k);
 
