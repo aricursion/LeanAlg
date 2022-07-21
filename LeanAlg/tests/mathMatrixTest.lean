@@ -38,8 +38,7 @@ def mathMatrixTest : IO Unit :=
       IO.eprintln (s! "Math Matrix not multiplying properly. The result should be 24. Instead: {m3.get 0 1}")
       tests_passed := false
 
-
-
-
+    IO.eprint m3.toString
     if tests_passed = true then
       IO.eprintln (s!"All mathMatrix tests passed!")
+

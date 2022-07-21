@@ -6,11 +6,7 @@ def dot_prod_comm (v w : mathVec m) : v.dot_product w = w.dot_product v :=
   by
     unfold mathVec.dot_product
     simp
-    unfold mathVec.foldl
-    cases m
-    rfl
-    apply congrFun 
-    
+    suffices (λ z (x, y) => z * x + y) = (λ z (x, y) => z + y + x) by simp 
 
 def transpose_of_prod (M : mathMatrix m n) (M' : mathMatrix n k) : (M.multiply M').transpose = (M'.transpose).multiply (M.transpose) :=
   by

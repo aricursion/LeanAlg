@@ -4,6 +4,7 @@
 #include <stdio.h>
 
 #include "../utils/utils.h"
+#include "mathMatrix_ffi.h"
 typedef struct mathVec {
     double*   data;
     uint32_t length;
@@ -77,17 +78,31 @@ lean_object* mathVec_new(lean_object* len_, double val) {
     return out;
 }
 
+uint8_t mathVec_eqv(lean_object* m_, lean_object* v_, lean_object* w_) {
+    mathVec* v = mathVec_unboxer(v_);
+    mathVec* w = mathVec_unboxer(w_);
+    for (size_t i = 0; i < v->length; i++) {
+        if (v->data[i] != w->data[i])
+            return 0;
+    }
+
+    return 1;
+}
+
+lean_object* l_Fin_ofNat(lean_object*, lean_object*);
+
 lean_object* mathVec_tabulate(lean_object* m_, lean_object* f) {
     uint32_t m = lean_unbox_uint32(m_);
     mathVec* out = mathVec_alloc(m);
     for (uint32_t i = 0; i < m; i++) {
         lean_object* inat = lean_unsigned_to_nat(i);
         lean_object* ifin = l_Fin_ofNat(lean_unsigned_to_nat(m-1), inat);
-        out->data[i] = lean_unbox_uint32(lean_apply_1(f, ifin));
+        out->data[i] = lean_unbox_float(lean_apply_1(f, ifin));
     }
 
     return mathVec_boxer(out);
 }
+
 //good
 double mathVec_get_val(lean_object* fin_size_, lean_object* x_1, lean_object* x_2) {
     mathVec* v = mathVec_unboxer(x_1);

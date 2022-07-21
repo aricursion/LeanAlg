@@ -1,4 +1,5 @@
 import LeanAlg.mathVec
+import LeanAlg.genVec
 
 def mathVecTest : IO Unit :=
   open mathVec in do
@@ -21,6 +22,19 @@ def mathVecTest : IO Unit :=
       IO.eprintln (s! "val in original vec {v1.get (1 : Fin 3)}")
       IO.eprintln (s! "val in new vec {v2.get (1 : Fin 3)}")
       tests_passed := false
+    
+    let v := tabulate 5 (λ | 0 => 1.0 
+                           | n => 2.0)
+    
+    if ¬ mathVecEqv v (mathVec.from_array #[1.0, 2.0, 2.0, 2.0, 2.0]) then
+      IO.eprintln (s! "Tabulate not working")
+      tests_passed := false
+
+    IO.eprint (v.toString ++ "\n")
 
     if tests_passed = true then
       IO.eprintln (s!"All mathVec tests passed!")
+
+    
+
+

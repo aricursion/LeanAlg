@@ -4,6 +4,7 @@
 #include <stdio.h>
 
 #include "../utils/utils.h"
+#include "mathVec_ffi.h"
 #include <cblas.h>
 #include <stdio.h>
 
@@ -141,6 +142,25 @@ lean_object* mathMatrix_set_val(lean_object* rows_, lean_object* cols_, lean_obj
     return mathMatrix_boxer(out_struct);
 }
 
+lean_object* mathMatrix_getRow(lean_object* rows_, lean_object* cols_, lean_object* M_, lean_object* row_) {
+    mathMatrix* M = mathMatrix_unboxer(M_);
+    mathVec* out = mathVec_alloc(M->cols);
+    uint8_t row = lean_unbox_uint32(row_);
+    for (size_t i = 0; i < M->cols; i++) {
+        out->data[i] = mathMatrix_struct_get(M, row, i);
+    }
+    return mathVec_boxer(out);
+}
+
+lean_object* mathMatrix_getCol(lean_object* rows_, lean_object* cols_, lean_object* M_, lean_object* col_) {
+    mathMatrix* M = mathMatrix_unboxer(M_);
+    mathVec* out = mathVec_alloc(M->rows);
+    uint8_t col = lean_unbox_uint32(col_);
+    for (size_t i = 0; i < M->rows; i++) {
+        out->data[i] = mathMatrix_struct_get(M, i, col);
+    }
+    return mathVec_boxer(out);
+}
 lean_object* mathMatrix_transpose(lean_object* rows_, lean_object* cols_, lean_object* M_) {
     mathMatrix* M = mathMatrix_unboxer(M_);
     mathMatrix* out_struct = mathMatrix_alloc(M->cols, M->rows);
@@ -193,5 +213,4 @@ lean_object* mathMatrix_mul(lean_object* m_, lean_object* n_, lean_object* k_, l
     */
 
     return mathMatrix_boxer(out_struct);
-
 }

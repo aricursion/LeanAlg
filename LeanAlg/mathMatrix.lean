@@ -45,9 +45,11 @@ def set (M : @&mathMatrix m n) (i : @&Fin m) (j : @&Fin n) (x : @&Float) : mathM
 def transpose (M : @&mathMatrix m n) : mathMatrix n m
   := ⟨λ i j => M.data j i⟩
 
+@[extern "mathMatrix_getCol"]
 def getCol (M : @& mathMatrix m n) (j : Fin n) : mathVec m 
   := ⟨λ i => M.data i j⟩
 
+@[extern "mathMatrix_getRow"]
 def getRow (M : @& mathMatrix m n) (i : Fin m) : mathVec n
   := ⟨λ j => M.data i j⟩ 
 
@@ -55,3 +57,10 @@ def getRow (M : @& mathMatrix m n) (i : Fin m) : mathVec n
 def multiply (M : @& mathMatrix m n) (M' : @&mathMatrix n k) : mathMatrix m k
   := ⟨λ i j => mathVec.dot_product (getRow M i) (getCol M' j)⟩ 
 
+def toString (M : mathMatrix m n) : String :=
+  Id.run do
+    let mut out := ""
+    for h : i in [:m] do
+      let i' := Fin.mk i h.upper
+      out := out ++ (M.getRow i').toString ++ "\n"
+    return out
