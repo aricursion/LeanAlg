@@ -1,6 +1,5 @@
 #include <lean/lean.h>
-
-typedef struct mathMatrix mathMatrix;
+#include "structs.h"
 
 //good
 void mathMatrix_finalizer(void* M_);

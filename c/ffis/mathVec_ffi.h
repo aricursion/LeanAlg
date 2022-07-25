@@ -1,7 +1,5 @@
 #include <lean/lean.h>
-
-typedef struct mathVec mathVec;
-
+#include "structs.h"
 //good
 void mathVec_finalizer(void* v_);
 

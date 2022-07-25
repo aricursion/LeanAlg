@@ -4,14 +4,8 @@
 #include <stdio.h>
 
 #include "../utils/utils.h"
-#include "mathVec_ffi.h"
+//#include "mathVec_ffi.h"
 #include <cblas.h>
-
-typedef struct mathMatrix {
-    double*   data;
-    uint32_t  rows;
-    uint32_t  cols;
-} mathMatrix;
 
 //good
 static lean_external_class* g_mathMatrix_external_class = NULL;

@@ -5,10 +5,6 @@
 
 #include "../utils/utils.h"
 #include "mathMatrix_ffi.h"
-typedef struct mathVec {
-    double*   data;
-    uint32_t length;
-} mathVec;
 
 //good
 static lean_external_class* g_mathVec_external_class = NULL;
