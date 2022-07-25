@@ -6,8 +6,6 @@
 #include "../utils/utils.h"
 #include "mathVec_ffi.h"
 #include <cblas.h>
-#include <stdio.h>
-
 
 typedef struct mathMatrix {
     double*   data;
@@ -67,7 +65,7 @@ void mathMatrix_struct_set(mathMatrix* M, uint32_t i, uint32_t j, double val) {
     M->data[(i*M->cols)+j] = val;
 }
 
-mathMatrix* mathMatrix_copy(mathMatrix* M) {
+mathMatrix* mathMatrix_struct_copy(mathMatrix* M) {
     mathMatrix* out = mathMatrix_alloc(M->rows, M->cols);
     for (size_t i = 0; i < M->rows; i++) {
         for (size_t j = 0; j < M->cols; j++) {
@@ -133,7 +131,7 @@ double mathMatrix_get_val(lean_object* rows_, lean_object* cols_, lean_object* M
 lean_object* mathMatrix_set_val(lean_object* rows_, lean_object* cols_, lean_object* M_, lean_object* i_, lean_object* j_, double x) {
     mathMatrix* M = mathMatrix_unboxer(M_);
 
-    mathMatrix* out_struct = mathMatrix_copy(M);
+    mathMatrix* out_struct = mathMatrix_struct_copy(M);
     
     uint32_t idx = lean_unbox_uint32(i_);
     uint32_t jdx = lean_unbox_uint32(j_);
@@ -173,44 +171,44 @@ lean_object* mathMatrix_transpose(lean_object* rows_, lean_object* cols_, lean_o
     return mathMatrix_boxer(out_struct);
 }
 
-lean_object* mathMatrix_mul(lean_object* m_, lean_object* n_, lean_object* k_, lean_object* M1_, lean_object* M2_) {
-    //uint32_t m = lean_unbox_uint32(m_);
-    //uint32_t n = lean_unbox_uint32(n_);
-    //uint32_t k = lean_unbox_uint32(k_);
+lean_object* mathMatrix_mul_MM(lean_object* m_, lean_object* n_, lean_object* k_, lean_object* M1_, lean_object* M2_) {
     mathMatrix* M1 = mathMatrix_unboxer(M1_);
     mathMatrix* M2 = mathMatrix_unboxer(M2_);
     uint32_t m = M1->rows;
     uint32_t n = M1->cols;
     uint32_t k = M2->cols;
 
-    assert(n = M2->rows);
+    assert(n == M2->rows);
 
-    mathMatrix* out_struct = mathMatrix_alloc(M1->rows, M2->cols);
+    mathMatrix* out_struct = mathMatrix_alloc(m, k);
     
     double* result = malloc(sizeof(double)*m*k);
     for (size_t i = 0; i < m*k; i++) {
         result[i] = 0.0;
     }
 
-    /*
-    for (int i = 0; i < m*n; i++) {
-        printf("%f\n",M1->data[i]);
-    }
-    
-    for (int i = 0; i < k*n; i++) {
-        printf("%f\n",M2->data[i]);
-    }
-    */
-
     cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
                 m, k, n, 1.0, M1->data, n, M2->data, k, 0.0, result, k);
 
     out_struct->data = result;
-    /*
-    for (size_t i = 0; i < m*k; i++) {
-        printf("%f\n", result[i]);
-    }
-    */
 
     return mathMatrix_boxer(out_struct);
+}
+
+lean_object* mathMatrix_mul_Mv(lean_object* m_, lean_object* n_, lean_object* M_, lean_object* v_) {
+    mathMatrix* M = mathMatrix_unboxer(M_);
+    mathVec*    v = mathVec_unboxer(v_);
+    uint32_t m = M->rows;
+    uint32_t n = M->cols;
+
+    assert(n == v->length);
+
+    mathVec* out_struct = mathVec_alloc(n);
+    double* result = calloc(sizeof(double), n);
+
+    cblas_dgemv(CblasRowMajor, CblasNoTrans, 
+                m, n, 1.0, M->data, n, v->data, 1, 0, result, 1);
+    
+    out_struct->data = result;
+    return mathVec_boxer(out_struct);
 }

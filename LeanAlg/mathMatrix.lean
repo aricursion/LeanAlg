@@ -53,10 +53,6 @@ def getCol (M : @& mathMatrix m n) (j : Fin n) : mathVec m
 def getRow (M : @& mathMatrix m n) (i : Fin m) : mathVec n
   := ⟨λ j => M.data i j⟩ 
 
-@[extern "mathMatrix_mul"]
-def multiply (M : @& mathMatrix m n) (M' : @&mathMatrix n k) : mathMatrix m k
-  := ⟨λ i j => mathVec.dot_product (getRow M i) (getCol M' j)⟩ 
-
 def toString (M : mathMatrix m n) : String :=
   Id.run do
     let mut out := ""
@@ -64,3 +60,17 @@ def toString (M : mathMatrix m n) : String :=
       let i' := Fin.mk i h.upper
       out := out ++ (M.getRow i').toString ++ "\n"
     return out
+
+@[extern "mathMatrix_mul_MM"]
+def multiply_MM (M : @& mathMatrix m n) (M' : @&mathMatrix n k) : mathMatrix m k
+  := ⟨λ i j => mathVec.dot_product (getRow M i) (getCol M' j)⟩ 
+
+@[extern "mathMatrix_mul_Mv"]
+def multiply_Mv (M : @&mathMatrix m n) (v : @&mathVec n) : mathVec m 
+  := ⟨λ i => mathVec.dot_product v (M.getRow i)⟩ 
+
+--@[extern "mathmatrix_mul_vM"]
+def multiply_vM (v : @&mathVec m) (M: @&mathMatrix m n) : mathVec n 
+  := ⟨λ i => mathVec.dot_product v (M.getCol i)⟩ 
+
+

@@ -31,8 +31,11 @@ def tabulate (m : @&Nat) (f : @&Fin m -> Float) : mathVec m
   := ⟨λ i => f i⟩  
 
 @[extern "mathVec_eqv"]
-def mathVecEqv (v w : mathVec m)
+def isEqv (v w : mathVec m)
   := genVec.VecEqv (v.to_genVec) (w.to_genVec)
+
+instance : BEq (mathVec m)
+  := ⟨λ M1 M2 => isEqv M1 M2⟩
 
 -- for whatever reason, when accessing you need to
 -- explicitly type the index such as (3 : Fin a.size)

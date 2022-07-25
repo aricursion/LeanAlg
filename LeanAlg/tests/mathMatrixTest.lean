@@ -29,7 +29,7 @@ def mathMatrixTest : IO Unit :=
 
     let m2 := new 2 2 4
     let m2 := m2.set 1 0 6
-    let m3 := m1.multiply m2
+    let m3 := m1.multiply_MM m2
 
     let m4 := new 2 2 24
     let m4 := m4.set 0 0 26
@@ -38,7 +38,10 @@ def mathMatrixTest : IO Unit :=
       IO.eprintln (s! "Math Matrix not multiplying properly. The result should be 24. Instead: {m3.get 0 1}")
       tests_passed := false
 
-    IO.eprint m3.toString
+    let v := m4.multiply_Mv (mathVec.from_array #[3, 2])
+    if (v != (mathVec.from_array #[126, 138])) then
+      IO.eprintln (s! "Math Matrix not multiplying with Vectors properly")
+      tests_passed := false
+    
     if tests_passed = true then
       IO.eprintln (s!"All mathMatrix tests passed!")
-

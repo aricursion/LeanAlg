@@ -26,11 +26,9 @@ def mathVecTest : IO Unit :=
     let v := tabulate 5 (λ | 0 => 1.0 
                            | n => 2.0)
     
-    if ¬ mathVecEqv v (mathVec.from_array #[1.0, 2.0, 2.0, 2.0, 2.0]) then
+    if ¬ isEqv v (mathVec.from_array #[1.0, 2.0, 2.0, 2.0, 2.0]) then
       IO.eprintln (s! "Tabulate not working")
       tests_passed := false
-
-    IO.eprint (v.toString ++ "\n")
 
     if tests_passed = true then
       IO.eprintln (s!"All mathVec tests passed!")

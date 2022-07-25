@@ -18,7 +18,7 @@ double mathMatrix_struct_get(mathMatrix* M, uint32_t i, uint32_t j);
 
 void mathMatrix_struct_set(mathMatrix* M, uint32_t i, uint32_t j, double val);
 
-mathMatrix* mathMatrix_copy(mathMatrix* M);
+mathMatrix* mathMatrix_struct_copy(mathMatrix* M);
 
 lean_object* mathMatrix_boxer(mathMatrix* M);
 
