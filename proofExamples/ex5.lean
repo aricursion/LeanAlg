@@ -1,19 +1,25 @@
 import LeanAlg.mathMatrix
 
-axiom float_mul_comm (x y : Float) : x * y = y * x
+def id_pow (e : Nat) : mathMatrix.exp (mathMatrix.id n) e = mathMatrix.id n :=
+  by 
+    induction e 
+    case zero => rfl
+    case succ n ih =>
+      unfold mathMatrix.exp
+      simp
+      rw [ih]
+      unfold mathMatrix.id
+      unfold mathMatrix.multiply_MM
+      simp
+      funext i j
+      unfold mathVec.dot_product
+      simp
+      unfold mathVec.to_genVec
+      unfold genVec.zip
+      sorry
 
-def dot_prod_comm (v w : mathVec m) : v.dot_product w = w.dot_product v :=
-  by
-    unfold mathVec.dot_product
-    simp
-    suffices (λ z (x, y) => z * x + y) = (λ z (x, y) => z + y + x) by simp 
-
-def transpose_of_prod (M : mathMatrix m n) (M' : mathMatrix n k) : (M.multiply M').transpose = (M'.transpose).multiply (M.transpose) :=
-  by
-    unfold mathMatrix.transpose
-    unfold mathMatrix.multiply
-    unfold mathMatrix.getCol
-    unfold mathMatrix.getRow
-    simp
-    funext a b
-    rw [dot_prod_comm]
+def is_inverses (M N: mathMatrix n n) : Bool :=
+  if (M.multiply_MM N == mathMatrix.id n) ∧ (N.multiply_MM M == mathMatrix.id n) then
+    true
+  else
+    false

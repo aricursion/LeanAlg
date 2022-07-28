@@ -27,7 +27,7 @@ mathMatrix* mathMatrix_unboxer(lean_object* o);
 lean_object* mathMatrix_new(lean_object* rows_, lean_object* cols_, double val);
 
 
-uint32_t mathMatrix_isEqv(lean_object* m, lean_object* n, lean_object* M1_, lean_object* M2_);
+uint8_t mathMatrix_isEqv(lean_object* m, lean_object* n, lean_object* M1_, lean_object* M2_);
 
 double mathMatrix_get_val(lean_object* rows_, lean_object* cols_, lean_object* M_, lean_object* i_, lean_object* j_);
 

@@ -6,9 +6,11 @@ structure mathVec (m : Nat) where
 instance : Inhabited (mathVec m) where
   default : mathVec m:= ⟨λ _ => 0⟩  
 
-@[extern "mathVec_initialize"] private constant mathVec_initializer : IO Unit
+@[extern "mathVec_initialize"]
+opaque mathVec_initializer : IO Unit
 
 builtin_initialize mathVec_initializer
+
 namespace mathVec
 -- Supporting functions for Lean
 -- definition of dot product

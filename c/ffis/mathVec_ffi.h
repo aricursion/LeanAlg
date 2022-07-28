@@ -1,5 +1,6 @@
 #include <lean/lean.h>
 #include "structs.h"
+
 //good
 void mathVec_finalizer(void* v_);
 

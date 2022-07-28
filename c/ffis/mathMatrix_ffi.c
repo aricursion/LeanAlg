@@ -4,8 +4,9 @@
 #include <stdio.h>
 
 #include "../utils/utils.h"
-//#include "mathVec_ffi.h"
-#include <cblas.h>
+#include "mathVec_ffi.h"
+#include "cblas.h"
+#include "lapacke.h"
 
 //good
 static lean_external_class* g_mathMatrix_external_class = NULL;
@@ -94,7 +95,7 @@ lean_object* mathMatrix_new(lean_object* rows_, lean_object* cols_, double val) 
         return make_error("ERROR_INSUF_MEM");
     }
 
-    for (size_t i = 0; i< rows*cols; i++) {
+    for (size_t i = 0; i < rows*cols; i++) {
         m->data[i] = val;
     }
 
@@ -102,7 +103,23 @@ lean_object* mathMatrix_new(lean_object* rows_, lean_object* cols_, double val) 
     return out;
 }
 
-uint32_t mathMatrix_isEqv(lean_object* m, lean_object* n, lean_object* M1_, lean_object* M2_) {
+lean_object* mathMatrix_new_id(lean_object* n_) {
+    uint32_t n = lean_unbox_uint32(n_);
+    mathMatrix* m = mathMatrix_alloc(n, n);
+    for (size_t i = 0; i < n; i++) {
+        for (size_t j = 0; j < n; j++) {
+            if (i == j)
+                mathMatrix_struct_set(m, i, j, 1);
+
+            else
+                mathMatrix_struct_set(m, i, j, 0);
+        }
+    }
+
+    return mathMatrix_boxer(m);
+}
+
+uint8_t mathMatrix_isEqv(lean_object* m, lean_object* n, lean_object* M1_, lean_object* M2_) {
     mathMatrix* M1 = mathMatrix_unboxer(M1_);
     mathMatrix* M2 = mathMatrix_unboxer(M2_);
 
@@ -204,5 +221,7 @@ lean_object* mathMatrix_mul_Mv(lean_object* m_, lean_object* n_, lean_object* M_
                 m, n, 1.0, M->data, n, v->data, 1, 0, result, 1);
     
     out_struct->data = result;
+
     return mathVec_boxer(out_struct);
 }
+

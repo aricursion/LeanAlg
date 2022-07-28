@@ -8,7 +8,7 @@ structure genVec (m : Nat) (α : Type u) where
 namespace genVec
 
 def new (m : Nat) (x : α) : genVec m α 
-  := ⟨λ m => x⟩  
+  := ⟨λ _ => x⟩  
 
 
 def tabulate (m : Nat) (f : Fin m -> α) : genVec m α 
@@ -26,8 +26,8 @@ def set (v : genVec m α) (i : Fin m) (x : α) : genVec m α
 -- Supporting functions for Lean
 -- definition of dot product
 def foldl (f : α → β → α) (z : α) : {m : Nat} → (v : genVec m β) → α  
-  | 0, v   => z
-  | m+1, v => foldl f (f z (v.data 0)) ⟨v.data ∘ Fin.succ⟩
+  | 0, _   => z
+  | _+1, v => foldl f (f z (v.data 0)) ⟨v.data ∘ Fin.succ⟩
 
 def zip (v : genVec m α) (w : genVec m β) : genVec m (α × β) 
   := ⟨λ i => (v.data i, w.data i)⟩

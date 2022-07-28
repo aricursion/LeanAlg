@@ -1,5 +1,6 @@
 import LeanAlg.mathVec
 import LeanAlg.genVec
+import LeanAlg.utils.FloatUtils
 
 structure mathMatrix (m n : Nat) where
   data : Fin m -> Fin n -> Float
@@ -16,10 +17,11 @@ def isEqv (M1 M2 : @&mathMatrix m n) : Bool :=
 instance : BEq (mathMatrix m n)
   := ⟨λ M1 M2 => isEqv M1 M2⟩
 
-@[extern "mathMatrix_initialize"] 
-private constant mathMatrix_initializer : IO Unit
+@[extern "mathMatrix_initialize"]
+opaque mathMatrix_initializer : IO Unit
 
 builtin_initialize mathMatrix_initializer
+
 namespace mathMatrix
 
 @[extern "mathMatrix_new"]
@@ -30,8 +32,8 @@ def new (m n : @&Nat) (x : @&Float) : mathMatrix m n
 -- explicitly type the index such as (3 : Fin a.size)
 -- row, col
 --@[extern "mathMatrix_from_array"]
-def from_array (a : @&Array (Array Float)) : (mathMatrix (a.size) (a[0].size))
-  := ⟨λ i => λ j => a[i][j]⟩  
+--def from_array (a : @&Array (Array Float)) : (mathMatrix (a.size) (a[0].size))
+--  := ⟨λ i => λ j => a[i][j]⟩  
 
 @[extern "mathMatrix_get_val"]
 def get (M : @&mathMatrix m n) (i : @&Fin m) (j : @& Fin n) : Float 
@@ -73,4 +75,10 @@ def multiply_Mv (M : @&mathMatrix m n) (v : @&mathVec n) : mathVec m
 def multiply_vM (v : @&mathVec m) (M: @&mathMatrix m n) : mathVec n 
   := ⟨λ i => mathVec.dot_product v (M.getCol i)⟩ 
 
+@[extern "mathMatrix_new_id"]
+def id (n : Nat) : mathMatrix n n :=
+  ⟨λ i j => if i = j then 1 else 0⟩ 
 
+def exp (M : mathMatrix n n) : (e : Nat) -> mathMatrix n n
+| 0 => mathMatrix.id n
+| Nat.succ m => M.multiply_MM (exp M m)

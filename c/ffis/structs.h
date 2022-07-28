@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdint.h>
+
 #ifndef STRUCTS_H
 #define STRUCTS_H
 
