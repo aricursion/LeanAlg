@@ -26,7 +26,7 @@ namespace mathMatrix
 
 @[extern "mathMatrix_new"]
 def new (m n : @&Nat) (x : @&Float) : mathMatrix m n
-  := ⟨λ m => λ n => x⟩  
+  := ⟨λ _ => λ _ => x⟩  
 
 -- for whatever reason, when accessing you need to
 -- explicitly type the index such as (3 : Fin a.size)

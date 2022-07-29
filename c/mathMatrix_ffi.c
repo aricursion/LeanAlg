@@ -3,8 +3,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "../utils/utils.h"
-#include "mathVec_ffi.h"
+#include "./headers/utils.h"
+#include "./headers/mathVec_ffi.h"
 #include "cblas.h"
 #include "lapacke.h"
 

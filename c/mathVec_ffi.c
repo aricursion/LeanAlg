@@ -3,8 +3,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "../utils/utils.h"
-#include "mathMatrix_ffi.h"
+#include "./headers/utils.h"
+#include "./headers/mathMatrix_ffi.h"
 
 //good
 static lean_external_class* g_mathVec_external_class = NULL;

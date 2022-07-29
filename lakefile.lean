@@ -1,7 +1,6 @@
 import Lake
 open System Lake DSL
 
-lean_lib LeanAlg
 
 package LeanAlg {
   -- customize layout
@@ -13,9 +12,13 @@ package LeanAlg {
                     "-lopenblas", 
                     "-Wl,-R./third_party/OpenBLASLib/lib"]
 
-  --precompileModules := true
+  precompileModules := true
   packagesDir := "third_party"
 }
+
+--lean_lib LeanAlg {
+  --precompileModules := true
+--}
 
 @[defaultTarget] lean_exe test {
   root := `Main
@@ -25,9 +28,9 @@ def pkgDir := __dir__
 def cSrcDir := pkgDir / "c"
 def cBuildDir := pkgDir / _package.buildDir / "c"
 
-def ffiOTarget : FileTarget :=
-  let oFile := cBuildDir / "bindings.o"
-  let srcTarget := inputFileTarget <| cSrcDir / "bindings.c"
+def oTarget (filename : String) : FileTarget :=
+  let oFile := cBuildDir / s!"{filename}.o"
+  let srcTarget := inputFileTarget <| cSrcDir / s!"{filename}.c"
   fileTargetWithDep oFile srcTarget fun srcFile => do
     compileO oFile srcFile #["-I", (← getLeanIncludeDir).toString,
                              "-I", "third_party/OpenBLASLib/include"]
@@ -38,7 +41,7 @@ def ffiOTarget : FileTarget :=
 
 extern_lib cLib :=
   let libFile := cBuildDir / nameToStaticLib "leanffi"
-  staticLibTarget libFile #[ffiOTarget]
+  staticLibTarget libFile #[oTarget "./utils/utils", oTarget "mathVec_ffi", oTarget "mathMatrix_ffi"]
 
 require mathlib from git
   "https://github.com/leanprover-community/mathlib4.git"
