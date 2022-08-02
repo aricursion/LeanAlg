@@ -15,8 +15,8 @@ namespace mathVec
 -- Supporting functions for Lean
 -- definition of dot product
 def foldl (f : α → β → α) (z : α) : {m : Nat} → (v : genVec m β) → α  
-  | 0, v   => z
-  | m+1, v => foldl f (f z (v.data 0)) ⟨v.data ∘ Fin.succ⟩
+  | 0, _   => z
+  | Nat.succ _, v => foldl f (f z (v.data 0)) ⟨v.data ∘ Fin.succ⟩
 
 def zip (v w : @&mathVec m) : genVec m (Float × Float) 
   := ⟨λ i => (v.data i, w.data i)⟩ 
@@ -26,15 +26,17 @@ def to_genVec (v : mathVec m) : genVec m Float
 
 @[extern "mathVec_new"]
 def new (m : @&Nat) (x : @&Float) : mathVec m 
-  := ⟨λ m => x⟩  
+  := ⟨λ _ => x⟩  
 
 @[extern "mathVec_tabulate"]
 def tabulate (m : @&Nat) (f : @&Fin m -> Float) : mathVec m
   := ⟨λ i => f i⟩  
 
 @[extern "mathVec_eqv"]
-def isEqv (v w : mathVec m)
-  := genVec.VecEqv (v.to_genVec) (w.to_genVec)
+def isEqv : {m : Nat} → (v w : @&mathVec m) → Bool
+  | 0, _, _ => True
+  | Nat.succ _, v, w => (v.data 0 == w.data 0) ∧ 
+                        isEqv ⟨v.data ∘ Fin.succ⟩ ⟨w.data ∘ Fin.succ⟩ 
 
 instance : BEq (mathVec m)
   := ⟨λ M1 M2 => isEqv M1 M2⟩
@@ -62,8 +64,10 @@ def add_vector (v w : @&mathVec m) : mathVec m
   := ⟨λ i => v.data i + w.data i⟩
 
 @[extern "mathVec_dot_prod"]
-def dot_product(v w : @&mathVec m) : Float :=
-  genVec.foldl (λ z (x, y) => z + (x * y)) 0 (genVec.zip (to_genVec v) (to_genVec w))
+def dot_product : {m : Nat} → (v w : @&mathVec m) → Float
+  | 0, _, _ => 1
+  | Nat.succ _, v, w => (v.data 0 * w.data 0) + 
+                        dot_product ⟨v.data ∘ Fin.succ⟩ ⟨w.data ∘ Fin.succ⟩ 
 
 def toString (v : mathVec m) : String :=
   Id.run do

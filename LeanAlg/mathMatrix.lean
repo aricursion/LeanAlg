@@ -63,6 +63,9 @@ def toString (M : mathMatrix m n) : String :=
       out := out ++ (M.getRow i').toString ++ "\n"
     return out
 
+instance : ToString (mathMatrix m n)
+  := ⟨λ M => M.toString⟩
+
 @[extern "mathMatrix_mul_MM"]
 def multiply_MM (M : @& mathMatrix m n) (M' : @&mathMatrix n k) : mathMatrix m k
   := ⟨λ i j => mathVec.dot_product (getRow M i) (getCol M' j)⟩ 
@@ -79,6 +82,7 @@ def multiply_vM (v : @&mathVec m) (M: @&mathMatrix m n) : mathVec n
 def id (n : Nat) : mathMatrix n n :=
   ⟨λ i j => if i = j then 1 else 0⟩ 
 
+@[extern "mathMatrix_exp"]
 def exp (M : mathMatrix n n) : (e : Nat) -> mathMatrix n n
 | 0 => mathMatrix.id n
 | Nat.succ m => M.multiply_MM (exp M m)

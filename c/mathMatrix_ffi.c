@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "./headers/utils.h"
 #include "./headers/mathVec_ffi.h"
@@ -49,6 +50,7 @@ mathMatrix* mathMatrix_alloc(uint32_t rows, uint32_t columns){
 }
 
 
+
 double mathMatrix_struct_get(mathMatrix* M, uint32_t i, uint32_t j) {
     assert(i < M->rows);
     assert(j < M->cols);
@@ -69,6 +71,39 @@ mathMatrix* mathMatrix_struct_copy(mathMatrix* M) {
     }
 
     return out;
+}
+
+mathMatrix* mathMatrix_struct_id (uint32_t n) {
+    mathMatrix* out = mathMatrix_alloc(n, n);
+    for (size_t i = 0; i < n; i++) {
+        for (size_t j = 0; j < n; j++) {
+            if (i==j)
+                mathMatrix_struct_set(out, i, j, 1);
+            else
+                mathMatrix_struct_set(out, i, j, 0);
+        }
+    }
+    return out;
+}
+
+void mathMatrix_struct_printer(mathMatrix* M, int before, int after) {
+    for (size_t i = 0; i < M->rows; i++) {
+        for (size_t j = 0; j < M->cols; j++) {
+            printf("%*.*f   ", before, after, mathMatrix_struct_get(M, i, j));
+        }
+        printf("\n");
+    }
+    printf("\n");
+}
+
+void mathMatrix_data_printer(double* data, uint32_t rows, uint32_t cols, int before, int after) {
+    for (size_t i = 0; i < rows; i++) {
+        for (size_t j = 0; j < cols; j++) {
+            printf("%*.*f   ", before, after, data[i*cols + j]);
+        }
+        printf("\n");
+    }
+    printf("\n");
 }
 
 // Not sure if I even need this
@@ -105,16 +140,7 @@ lean_object* mathMatrix_new(lean_object* rows_, lean_object* cols_, double val) 
 
 lean_object* mathMatrix_new_id(lean_object* n_) {
     uint32_t n = lean_unbox_uint32(n_);
-    mathMatrix* m = mathMatrix_alloc(n, n);
-    for (size_t i = 0; i < n; i++) {
-        for (size_t j = 0; j < n; j++) {
-            if (i == j)
-                mathMatrix_struct_set(m, i, j, 1);
-
-            else
-                mathMatrix_struct_set(m, i, j, 0);
-        }
-    }
+    mathMatrix* m = mathMatrix_struct_id(n);
 
     return mathMatrix_boxer(m);
 }
@@ -193,15 +219,8 @@ lean_object* mathMatrix_mul_MM(lean_object* m_, lean_object* n_, lean_object* k_
 
     mathMatrix* out_struct = mathMatrix_alloc(m, k);
     
-    double* result = malloc(sizeof(double)*m*k);
-    for (size_t i = 0; i < m*k; i++) {
-        result[i] = 0.0;
-    }
-
     cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
-                m, k, n, 1.0, M1->data, n, M2->data, k, 0.0, result, k);
-
-    out_struct->data = result;
+                m, k, n, 1.0, M1->data, n, M2->data, k, 0.0, out_struct->data, k);
 
     return mathMatrix_boxer(out_struct);
 }
@@ -215,13 +234,31 @@ lean_object* mathMatrix_mul_Mv(lean_object* m_, lean_object* n_, lean_object* M_
     assert(n == v->length);
 
     mathVec* out_struct = mathVec_alloc(n);
-    double* result = calloc(sizeof(double), n);
 
     cblas_dgemv(CblasRowMajor, CblasNoTrans, 
-                m, n, 1.0, M->data, n, v->data, 1, 0, result, 1);
-    
-    out_struct->data = result;
+                m, n, 1.0, M->data, n, v->data, 1, 0, out_struct->data, 1);
 
     return mathVec_boxer(out_struct);
 }
 
+lean_object* mathMatrix_exp (lean_object* n_, lean_object* M_, lean_object* e_) {
+    mathMatrix* M = mathMatrix_unboxer(M_);
+    uint32_t e = lean_unbox_uint32(e_);
+    uint32_t n = M->rows;
+    uint32_t n_square = n*n;
+    mathMatrix* result = mathMatrix_struct_id(n);
+
+    double* tmp = calloc(sizeof(double), n_square);
+
+    for (size_t i = 0; i < e; i++) {
+        cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
+                    n, n, n, 1.0, result->data, n, M->data, n, 0.0, tmp, n);
+
+        memcpy(result->data, tmp, n_square*sizeof(double));
+        memset(tmp, 0, n_square*sizeof(double));
+        mathMatrix_struct_printer(result, 3, 3);
+    }
+    free(tmp);
+    
+    return mathMatrix_boxer(result);
+}

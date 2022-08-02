@@ -1,5 +1,6 @@
 import LeanAlg.mathMatrix
 
+
 def id_pow (e : Nat) : mathMatrix.exp (mathMatrix.id n) e = mathMatrix.id n :=
   by 
     induction e 
@@ -8,10 +9,12 @@ def id_pow (e : Nat) : mathMatrix.exp (mathMatrix.id n) e = mathMatrix.id n :=
       unfold mathMatrix.exp
       simp
       rw [ih]
-      sorry
+      unfold mathMatrix.multiply_MM
+      unfold mathVec.dot_product
+      unfold mathMatrix.id
+      simp
+      funext i j
+      apply Eq.symm
+      split
 
-def is_inverses (M N: mathMatrix n n) : Bool :=
-  if (M.multiply_MM N == mathMatrix.id n) ∧ (N.multiply_MM M == mathMatrix.id n) then
-    true
-  else
-    false
+

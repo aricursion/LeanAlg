@@ -34,6 +34,11 @@ def mathMatrixTest : IO Unit :=
     let m4 := new 2 2 24
     let m4 := m4.set 0 0 26
     let m4 := m4.set 1 0 30
+    IO.eprintln (s! "Matrix 1:")
+    IO.eprintln (s! "{m3}")
+    IO.eprintln (s! "Matrix 2:")
+    IO.eprintln (s! "{m4}")
+
     if m3 != m4 then
       IO.eprintln (s! "Math Matrix not multiplying properly. The result should be 24. Instead: {m3.get 0 1}")
       tests_passed := false
@@ -42,6 +47,16 @@ def mathMatrixTest : IO Unit :=
     if (v != (mathVec.from_array #[126, 138])) then
       IO.eprintln (s! "Math Matrix not multiplying with Vectors properly")
       tests_passed := false
+
+    let m5 := new 3 3 7
+    let m6 := new 3 3 3087
+
+    if (m5.exp 3 != m6) then
+      IO.eprintln (s! "exponentiation wrong")
+      IO.eprintln (s! "Should be:\n {m6}")
+      IO.eprintln (s! "Got:\n {m5.exp 3}")
+      tests_passed := false
     
     if tests_passed = true then
       IO.eprintln (s!"All mathMatrix tests passed!")
+
